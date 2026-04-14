@@ -145,42 +145,6 @@ void getCellsList(int window_size, int xDims, int yDims, int zDims,
 	}
 }
 
-
-std::vector<double> readScalarSteps(std::string filepath)
-{
-	fstream fin;
-	fin.open(filepath.c_str(), std::ios::in);
-
-	if (!fin.is_open()) throw std::runtime_error("Could not open file");
-
-	std::string line, word;
-	std::vector<double> lambda2Values;
-	std::vector<std::string> row;
-	double val;
-
-	while (std::getline(fin, line))
-	{
-		std::stringstream ss(line);
-
-		std::vector<double> results;
-
-		while (ss >> val) {
-
-			results.push_back(val);
-
-			// If the next token is a comma, ignore it and move on
-			if (ss.peek() == ',') ss.ignore();
-		}
-
-		double index = results.at(0), lambda2Value = results.at(2), count = results.at(3);
-
-		lambda2Values.push_back(lambda2Value);
-
-	}
-
-	return lambda2Values;
-}
-
 void addPtIdxLists(int xDims, int yDims, int zDims, vtkDataSet* input)
 {
 	vtkSmartPointer<vtkUnsignedIntArray> PtIdsArray =
@@ -392,13 +356,7 @@ int main(int argc, char* argv[])
 	double scalar_range[2];
 	dataset->GetScalarRange(scalar_range);
 
-	std::string temp = argv[1];
-	temp = temp.erase(temp.length() - 4);
-	temp = temp + ".csv";
-	std::string stepsFile = temp;
-	std::vector<double> scalarValues = readScalarSteps(stepsFile);
-
-	scalar_range[1] = scalarValues.back();
+	scalar_range[1] = std::stof(argv[2]);
 
 	cout << scalar_range[0] << " " << scalar_range[1] << endl;
 	
@@ -450,6 +408,7 @@ int main(int argc, char* argv[])
 	ScalarThreshold->InsertTypedTuple(0, scalar_range);
 	Regions->GetFieldData()->AddArray(ScalarThreshold);
 
+	std::string temp = argv[1];
 	temp = temp.erase(temp.length() - 4);
 	temp = temp + "_Regions.vtk";
 	vtkNew<vtkDataSetWriter> writer;
