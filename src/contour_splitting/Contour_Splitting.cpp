@@ -1043,7 +1043,7 @@ int main(int argc, char* argv[])
 	dataset->DeepCopy(dataReader->GetOutput());
 
 	std::string segArrayName = "RegionIds";
-	std::string scalarName = "vorticity_mag";
+	std::string scalarName = "lambda2";
 	colorRegions(dataset, DATASET, scalarName, segArrayName);
 
 	segArrayName = "SegmentIds";

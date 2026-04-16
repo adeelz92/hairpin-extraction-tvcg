@@ -72,8 +72,6 @@
 #include <fstream>
 #include <vtkMinimalStandardRandomSequence.h>
 
-std::ofstream logFile;
-std::ofstream VortexInfoFile;
 vtkSmartPointer<vtkDataSet> DATASET;
 vtkSmartPointer<vtkDataSet> ISOSURFACES;
 std::unordered_set<vtkIdType> procesdRegions;
@@ -3717,16 +3715,6 @@ int main(int argc, char* argv[])
 	}
 
 	std::string temp = argv[1];
-	temp = temp.erase(temp.length() - 4);
-	temp = temp + "_HeadInfo.csv";
-	logFile.open(temp);
-	logFile << "VortexId,X,Y,Z\n";
-
-	temp = argv[1];
-	temp = temp.erase(temp.length() - 4);
-	temp = temp + "_VortexInfo.csv";
-	VortexInfoFile.open(temp);
-	VortexInfoFile << "X,Y,Z,VortexId,VortexHead\n";
 
 	// std::string datafile = "./skeleton_extraction/fortSkeleton.vtk";
 	temp = argv[1];
@@ -4129,9 +4117,6 @@ int main(int argc, char* argv[])
 	writer->SetFileName(temp.c_str());
 	writer->SetFileTypeToBinary();
 	writer->Write();
-
-	logFile.close();
-	VortexInfoFile.close();
 
 	return EXIT_SUCCESS;
 }
