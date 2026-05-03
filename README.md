@@ -2,8 +2,48 @@
 
 # [Datasets](https://uofh-my.sharepoint.com/:f:/g/personal/azafar3_cougarnet_uh_edu/IgBCUCBVRQBZRp51IhJ49ba2AT6kiBjjf2LKxVbrZ1IzXEY?e=QF69kG)
 
-# Extract hairpin vortices
-Extract hairpin vortices in turbulent flows based on geometric and physical analysis.
+Algorithm: Hairpin Vortex Extraction
+------------------------------------
+1.  Initialize:
+    - Extract vortical regions using λ2 criterion
+    - Perform merge tree-based segmentation and layering
+    - Sort segments by Z_max of their bounding boxes
+
+2.  For each segment S:
+    If S is already marked as Processed:
+        Continue to next segment
+
+    Compute average spanwise vorticity avg(ω'y) over segment S
+    
+    If avg(ω'y) > 0:
+        # Step A: Candidate Region Identification
+        - Integrate vortex lines (forward/backward) using S as seeds
+        - Merge all segments intersected by these lines to form candidate region R
+        - Extract skeleton of R
+        - Compute sub-skeleton paths (min geodesic distance between endpoints)
+
+        For each sub-skeleton:
+            # Step B: Structural Classification
+            - Classify segments as head, neck, or leg based on (x, y, z) alignment
+            - Verify structural criteria: 
+                * Legs must lie below and behind the head
+                * Necks must lie below the head
+            - Verify vorticity sign conditions:
+                * Head: avg(ω'y) > 0
+                * Left/Right Necks: avg(ωz) must have opposite signs
+                * Left/Right Legs: avg(ωx) must have opposite signs
+
+            If all criteria are satisfied:
+                # Step C: Refinement using |ω|
+                - Split skeleton into branches
+                - Re-segment candidate region R using |ω| to get 'vort_segments'
+                
+                For each vort_segment:
+                    - Assign to nearest skeleton branch via min Euclidean distance
+                
+                - Combine assigned segments to form final Hairpin Vortex Volume
+                - Extract surface mesh and apply Laplacian smoothing
+                - Mark all contributing segments as Processed
 
 Installation instructions Windows 10.
 
